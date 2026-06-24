@@ -1,0 +1,5 @@
+01 Source/
+output/
+.playwright-cli/
+.git/
+*.log
