@@ -1,44 +1,460 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#C8442B">
-    <title>한국타악예술원</title>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
-    <link rel="manifest" href="manifest.webmanifest">
-    <link rel="icon" type="image/png" href="assets/logo/logo-square.png">
-    <link rel="apple-touch-icon" href="assets/logo/logo-square.png">
-    <link rel="stylesheet" href="css/style.css">
-  </head>
-  <body>
-    <div class="app-shell">
-      <header class="app-header" aria-label="앱 상단">
-        <button id="backButton" class="back-button" type="button" aria-label="뒤로가기" hidden>
-          <span aria-hidden="true">←</span>
-          <span>뒤로</span>
-        </button>
-        <button id="homeButton" class="brand-button" type="button" aria-label="홈으로 이동">
-          <img id="headerLogo" src="assets/logo/logo-horizontal.png" alt="한국타악예술원 로고">
-          <span id="headerTitle" class="header-title" hidden></span>
-        </button>
-        <span class="header-space" aria-hidden="true"></span>
-      </header>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1B1714">
+<title>한국타악예술원</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="logo/logo-square.png">
+<link rel="apple-touch-icon" href="logo/logo-square.png">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gothic+A1:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  ::-webkit-scrollbar{width:0;height:0}
+  @keyframes beat{0%,100%{transform:scale(.6);opacity:.4}50%{transform:scale(1.15);opacity:1}}
+  @keyframes viewIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important}}
+</style>
+</helmet>
+<div style="min-height:100vh;display:grid;place-items:center;padding:28px 16px;font-family:'Gothic A1',sans-serif;background:radial-gradient(120% 90% at 50% 0%,#33271e 0%,#1a1310 70%)">
+  <div style="width:min(420px,100%);height:min(884px,94vh);display:flex;flex-direction:column;overflow:hidden;background:#F2E9DA;border-radius:42px;box-shadow:0 34px 90px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.4)">
 
-      <main id="view" tabindex="-1" aria-live="polite">
-        <section class="loading-state">
-          <img src="assets/logo/logo-square.png" alt="" aria-hidden="true">
-          <p>한국타악예술원 준비 중</p>
-        </section>
+    <header style="flex-shrink:0;background:#1B1714;display:grid;grid-template-columns:46px 1fr 46px;align-items:center;padding:17px 16px 14px">
+      <div style="display:flex;justify-self:start">
+        <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
+          <button type="button" onClick="{{ onBack }}" aria-label="뒤로" style="display:grid;place-items:center;width:42px;height:42px;border:0;border-radius:13px;background:rgba(255,255,255,.08);color:#F2E9DA;cursor:pointer;font:inherit" style-active="background:rgba(255,255,255,.2)">
+            <span style="font-size:22px;font-weight:900;line-height:1;margin-top:-2px">‹</span>
+          </button>
+        </sc-if>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:9px;min-width:0">
+        <span style="width:9px;height:9px;border-radius:2px;background:#D83A2B;transform:rotate(45deg);flex-shrink:0"></span>
+        <span style="font-family:'Black Han Sans',sans-serif;font-size:20px;letter-spacing:-.5px;color:#F7EFE2;line-height:1;white-space:nowrap">한국타악예술원</span>
+      </div>
+      <div style="display:flex;justify-self:end">
+        <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
+          <button type="button" onClick="{{ onHome }}" aria-label="홈으로" style="display:grid;place-items:center;width:42px;height:42px;border:0;border-radius:13px;background:rgba(255,255,255,.08);color:#F2E9DA;cursor:pointer;font:inherit" style-active="background:rgba(255,255,255,.2)">
+            <span style="font-size:17px;line-height:1">⌂</span>
+          </button>
+        </sc-if>
+      </div>
+    </header>
+    <div style="flex-shrink:0;height:5px;background:linear-gradient(90deg,#D83A2B 0 20%,#E8A22B 20% 40%,#2E9163 40% 60%,#2A6CA8 60% 80%,#8B5BA8 80% 100%)"></div>
+
+    <div ref="{{ scrollRef }}" style="flex:1;overflow-y:auto;overflow-x:hidden">
+      <main style="padding:22px 18px 8px">
+
+        <!-- ===================== HOME ===================== -->
+        <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+          <section style="display:grid;justify-items:center;text-align:center;padding:6px 0 22px">
+            <img src="logo/logo-square.png" alt="한국타악예술원" style="width:92px;height:92px;object-fit:contain;margin-bottom:14px"/>
+            <h1 style="margin:0;font-family:'Black Han Sans',sans-serif;font-size:36px;line-height:1.08;letter-spacing:-1px;color:#1B1714">한국타악<span style="color:#D83A2B">예술원</span></h1>
+            <p style="margin:9px 0 0;font-size:10.5px;letter-spacing:2.5px;font-weight:800;color:#A8927C;text-transform:uppercase">Korean Traditional Percussion</p>
+            <div style="display:flex;align-items:center;gap:7px;margin-top:16px">
+              <span style="width:9px;height:9px;border-radius:50%;background:#D83A2B;animation:beat 1.1s ease-in-out infinite"></span>
+              <span style="width:13px;height:13px;border-radius:50%;background:#E8A22B;animation:beat 1.1s ease-in-out .12s infinite"></span>
+              <span style="width:9px;height:9px;border-radius:50%;background:#2E9163;animation:beat 1.1s ease-in-out .24s infinite"></span>
+              <span style="width:16px;height:16px;border-radius:50%;background:#2A6CA8;animation:beat 1.1s ease-in-out .36s infinite"></span>
+              <span style="width:9px;height:9px;border-radius:50%;background:#8B5BA8;animation:beat 1.1s ease-in-out .48s infinite"></span>
+            </div>
+          </section>
+          <nav style="display:grid;grid-template-columns:1fr 1fr;gap:14px" aria-label="주요 메뉴">
+            <sc-for list="{{ categories }}" as="cat">
+              <button type="button" onClick="{{ cat.onOpen }}" style="--c:{{ cat.accent }};--t:{{ cat.tint }};position:relative;display:flex;flex-direction:column;gap:10px;padding:18px 12px 16px;background:#fff;border:1.5px solid #1B1714;border-radius:20px;box-shadow:4px 4px 0 #1B1714;cursor:pointer;font:inherit;text-align:center;overflow:hidden" style-active="transform:translate(2px,2px);box-shadow:1px 1px 0 #1B1714">
+                <span style="position:absolute;top:0;left:20px;right:20px;height:6px;background:var(--c);border-radius:0 0 7px 7px"></span>
+                <span style="display:flex;align-items:center;justify-content:space-between">
+                  <span style="font-family:'Black Han Sans',sans-serif;font-size:13px;color:var(--c);line-height:1">{{ cat.index }}</span>
+                  <span style="display:flex;gap:3.5px;align-items:center">
+                    <span style="width:5px;height:5px;border-radius:50%;background:var(--c);opacity:1"></span>
+                    <span style="width:5px;height:5px;border-radius:50%;background:var(--c);opacity:.5"></span>
+                    <span style="width:5px;height:5px;border-radius:50%;background:var(--c);opacity:.22"></span>
+                  </span>
+                </span>
+                <span style="display:grid;place-items:center;width:94px;height:94px;margin:2px auto 0;border-radius:50%;background:var(--t)">
+                  <img data-src="{{ cat.img }}" alt="{{ cat.title }}" style="max-width:70px;max-height:70px;object-fit:contain"/>
+                </span>
+                <span style="font-family:'Black Han Sans',sans-serif;font-size:17px;color:#1B1714;line-height:1.2;letter-spacing:-.3px">{{ cat.title }}</span>
+              </button>
+            </sc-for>
+          </nav>
+        </sc-if>
+
+        <!-- ===================== SUBMENU ===================== -->
+        <sc-if value="{{ isSubmenu }}" hint-placeholder-val="{{ false }}">
+          <section style="padding:2px 2px 18px">
+            <p style="margin:0 0 7px;font-size:11px;letter-spacing:2px;font-weight:900;color:#D83A2B;text-transform:uppercase">{{ sub.eyebrow }}</p>
+            <h1 style="margin:0;font-family:'Black Han Sans',sans-serif;font-size:30px;line-height:1.15;letter-spacing:-.8px;color:#1B1714">{{ sub.title }}</h1>
+            <p style="margin:9px 0 0;color:#8A7B6B;font-size:14px;font-weight:600;line-height:1.5">{{ sub.lead }}</p>
+          </section>
+          <nav style="display:grid;grid-template-columns:1fr 1fr;gap:14px" aria-label="종목">
+            <sc-for list="{{ sub.items }}" as="it">
+              <button type="button" onClick="{{ it.onOpen }}" style="--c:{{ it.accent }};--t:{{ it.tint }};position:relative;display:flex;flex-direction:column;background:#fff;border:1.5px solid #1B1714;border-radius:20px;box-shadow:4px 4px 0 #1B1714;cursor:pointer;font:inherit;overflow:hidden" style-active="transform:translate(2px,2px);box-shadow:1px 1px 0 #1B1714">
+                <span style="display:grid;place-items:center;height:138px;background:var(--t);border-bottom:1.5px solid #1B1714">
+                  <img data-src="{{ it.img }}" alt="{{ it.title }}" style="max-width:118px;max-height:120px;object-fit:contain"/>
+                </span>
+                <span style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px">
+                  <span style="font-family:'Black Han Sans',sans-serif;font-size:18px;color:#1B1714;letter-spacing:-.3px">{{ it.title }}</span>
+                  <span style="display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--c);color:#fff;font-size:14px;font-weight:900;line-height:1">→</span>
+                </span>
+              </button>
+            </sc-for>
+          </nav>
+        </sc-if>
+
+        <!-- ===================== CLASS DETAIL ===================== -->
+        <sc-if value="{{ isClass }}" hint-placeholder-val="{{ false }}">
+          <section style="padding:2px 2px 16px">
+            <p style="margin:0 0 7px;font-size:11px;letter-spacing:2px;font-weight:900;color:#D83A2B;text-transform:uppercase">수업 소개</p>
+            <h1 style="margin:0;font-family:'Black Han Sans',sans-serif;font-size:32px;line-height:1.12;letter-spacing:-.8px;color:#1B1714">{{ cls.title }}</h1>
+            <p style="margin:10px 0 0;color:#8A7B6B;font-size:15px;font-weight:700;line-height:1.5">{{ cls.tagline }}</p>
+          </section>
+          <div style="display:grid;gap:16px">
+            <div style="--t:{{ cls.tint }};--c:{{ cls.accent }};position:relative;display:grid;place-items:center;height:218px;background:var(--t);border:1.5px solid #1B1714;border-radius:22px;box-shadow:4px 4px 0 #1B1714;overflow:hidden">
+              <span style="position:absolute;top:0;left:0;right:0;height:7px;background:var(--c)"></span>
+              <img data-src="{{ cls.img }}" alt="{{ cls.title }}" style="max-width:78%;max-height:178px;object-fit:contain"/>
+            </div>
+            <section style="background:#fff;border:1.5px solid #1B1714;border-radius:20px;box-shadow:4px 4px 0 #1B1714;padding:18px 16px">
+              <h2 style="margin:0 0 14px;display:flex;align-items:center;gap:9px;font-family:'Black Han Sans',sans-serif;font-size:18px;color:#1B1714">
+                <span style="width:7px;height:18px;border-radius:3px;background:var(--c, #D83A2B)"></span>수업 정보
+              </h2>
+              <dl style="display:grid;gap:8px;margin:0">
+                <sc-for list="{{ cls.meta }}" as="m" hint-placeholder-count="7">
+                  <div style="display:grid;grid-template-columns:74px 1fr;gap:12px;align-items:center;padding:11px 13px;border-radius:13px;background:#F6EFE2">
+                    <dt style="margin:0;color:#B5462F;font-size:12.5px;font-weight:900">{{ m.label }}</dt>
+                    <dd style="margin:0;color:#28201A;font-size:14px;font-weight:700;line-height:1.4">{{ m.value }}</dd>
+                  </div>
+                </sc-for>
+              </dl>
+            </section>
+            <section style="background:#fff;border:1.5px solid #1B1714;border-radius:20px;box-shadow:4px 4px 0 #1B1714;padding:18px 16px">
+              <h2 style="margin:0 0 14px;display:flex;align-items:center;gap:9px;font-family:'Black Han Sans',sans-serif;font-size:18px;color:#1B1714">
+                <span style="width:7px;height:18px;border-radius:3px;background:#E8A22B"></span>반별 시간표
+              </h2>
+              <sc-if value="{{ cls.hasSchedule }}" hint-placeholder-val="{{ true }}">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                  <sc-for list="{{ cls.schedule }}" as="s" hint-placeholder-count="6">
+                    <div style="display:flex;align-items:center;gap:9px;padding:9px 11px;border:1.5px solid #EBD9B4;border-radius:999px;background:#FFFBF0">
+                      <span style="display:grid;place-items:center;width:28px;height:28px;flex-shrink:0;border-radius:50%;background:#E8A22B;color:#fff;font-size:13px;font-weight:900;font-family:'Black Han Sans',sans-serif">{{ s.day }}</span>
+                      <span style="color:#28201A;font-size:12.5px;font-weight:800;letter-spacing:-.3px">{{ s.time }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ cls.noSchedule }}" hint-placeholder-val="{{ false }}">
+                <p style="margin:0;color:#8A7B6B;font-size:14px;font-weight:800">시간 문의</p>
+              </sc-if>
+              <sc-if value="{{ cls.note }}" hint-placeholder-val="{{ false }}">
+                <p style="margin:12px 0 0;padding:11px 13px;border-radius:12px;background:rgba(139,91,168,.14);color:#6B4E84;font-size:13px;font-weight:700;line-height:1.5">{{ cls.note }}</p>
+              </sc-if>
+            </section>
+            <div style="display:grid;gap:10px;padding-bottom:2px">
+              <a href="{{ callHref }}" style="display:flex;align-items:center;justify-content:center;gap:8px;height:54px;border:1.5px solid #1B1714;border-radius:16px;background:#D83A2B;color:#fff;font-family:'Black Han Sans',sans-serif;font-size:17px;text-decoration:none;box-shadow:4px 4px 0 #1B1714" style-active="transform:translate(2px,2px);box-shadow:1px 1px 0 #1B1714">이메일 문의하기</a>
+              <button type="button" onClick="{{ onBack }}" style="display:flex;align-items:center;justify-content:center;height:50px;border:1.5px solid #1B1714;border-radius:16px;background:#fff;color:#1B1714;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit" style-active="background:#F0E6D4">← 수업 목록</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===================== LICENSE DETAIL ===================== -->
+        <sc-if value="{{ isLicense }}" hint-placeholder-val="{{ false }}">
+          <section style="padding:2px 2px 16px">
+            <p style="margin:0 0 7px;font-size:11px;letter-spacing:2px;font-weight:900;color:#C2603A;text-transform:uppercase">자격증 소개</p>
+            <h1 style="margin:0;font-family:'Black Han Sans',sans-serif;font-size:28px;line-height:1.15;letter-spacing:-.8px;color:#1B1714">{{ lic.title }}</h1>
+          </section>
+          <div style="display:grid;gap:16px">
+            <div style="--t:{{ lic.tint }};--c:{{ lic.accent }};position:relative;display:grid;place-items:center;height:190px;background:var(--t);border:1.5px solid #1B1714;border-radius:22px;box-shadow:4px 4px 0 #1B1714;overflow:hidden">
+              <span style="position:absolute;top:0;left:0;right:0;height:7px;background:var(--c)"></span>
+              <img data-src="{{ lic.img }}" alt="{{ lic.title }}" style="max-width:60%;max-height:140px;object-fit:contain"/>
+            </div>
+            <section style="background:#fff;border:1.5px solid #1B1714;border-radius:20px;box-shadow:4px 4px 0 #1B1714;padding:18px 16px;display:grid;gap:20px">
+              <div>
+                <h2 style="margin:0 0 12px;display:flex;align-items:center;gap:9px;font-family:'Black Han Sans',sans-serif;font-size:17px;color:#1B1714"><span style="width:7px;height:17px;border-radius:3px;background:#C2603A"></span>과정</h2>
+                <div style="display:grid;place-items:center;gap:9px;padding:22px 16px;border:1.5px dashed #CDB99E;border-radius:14px;background:#FBF6EC">
+                  <span style="display:flex;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:#C2603A;opacity:.9"></span><span style="width:7px;height:7px;border-radius:50%;background:#C2603A;opacity:.5"></span><span style="width:7px;height:7px;border-radius:50%;background:#C2603A;opacity:.25"></span></span>
+                  <p style="margin:0;color:#8A7B6B;font-size:13.5px;font-weight:800">자료를 준비 중입니다.</p>
+                </div>
+              </div>
+              <div>
+                <h2 style="margin:0 0 12px;display:flex;align-items:center;gap:9px;font-family:'Black Han Sans',sans-serif;font-size:17px;color:#1B1714"><span style="width:7px;height:17px;border-radius:3px;background:#C2603A"></span>응시자격</h2>
+                <p style="margin:0;color:#8A7B6B;font-size:14px;font-weight:700;line-height:1.6">내용 준비 중입니다.</p>
+              </div>
+              <div>
+                <h2 style="margin:0 0 12px;display:flex;align-items:center;gap:9px;font-family:'Black Han Sans',sans-serif;font-size:17px;color:#1B1714"><span style="width:7px;height:17px;border-radius:3px;background:#C2603A"></span>취득 절차</h2>
+                <div style="display:grid;place-items:center;gap:9px;padding:22px 16px;border:1.5px dashed #CDB99E;border-radius:14px;background:#FBF6EC">
+                  <span style="display:flex;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:#C2603A;opacity:.9"></span><span style="width:7px;height:7px;border-radius:50%;background:#C2603A;opacity:.5"></span><span style="width:7px;height:7px;border-radius:50%;background:#C2603A;opacity:.25"></span></span>
+                  <p style="margin:0;color:#8A7B6B;font-size:13.5px;font-weight:800">자료를 준비 중입니다.</p>
+                </div>
+              </div>
+              <dl style="display:grid;gap:8px;margin:0">
+                <div style="display:grid;grid-template-columns:60px 1fr;gap:12px;align-items:center;padding:11px 13px;border-radius:13px;background:#F6EFE2">
+                  <dt style="margin:0;color:#B5462F;font-size:12.5px;font-weight:900">비용</dt>
+                  <dd style="margin:0;color:#28201A;font-size:14px;font-weight:700">{{ lic.cost }}</dd>
+                </div>
+                <div style="display:grid;grid-template-columns:60px 1fr;gap:12px;align-items:center;padding:11px 13px;border-radius:13px;background:#F6EFE2">
+                  <dt style="margin:0;color:#B5462F;font-size:12.5px;font-weight:900">문의</dt>
+                  <dd style="margin:0;color:#28201A;font-size:14px;font-weight:700">{{ lic.contact }}</dd>
+                </div>
+              </dl>
+            </section>
+            <div style="display:grid;gap:10px;padding-bottom:2px">
+              <a href="{{ callHref }}" style="display:flex;align-items:center;justify-content:center;height:54px;border:1.5px solid #1B1714;border-radius:16px;background:#D83A2B;color:#fff;font-family:'Black Han Sans',sans-serif;font-size:17px;text-decoration:none;box-shadow:4px 4px 0 #1B1714" style-active="transform:translate(2px,2px);box-shadow:1px 1px 0 #1B1714">이메일 문의하기</a>
+              <button type="button" onClick="{{ onBack }}" style="display:flex;align-items:center;justify-content:center;height:50px;border:1.5px solid #1B1714;border-radius:16px;background:#fff;color:#1B1714;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit" style-active="background:#F0E6D4">← 자격증 목록</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===================== CONTENT ===================== -->
+        <sc-if value="{{ isContent }}" hint-placeholder-val="{{ false }}">
+          <section style="padding:2px 2px 18px">
+            <p style="margin:0 0 7px;font-size:11px;letter-spacing:2px;font-weight:900;color:#D83A2B;text-transform:uppercase">한국타악예술원</p>
+            <h1 style="margin:0;font-family:'Black Han Sans',sans-serif;font-size:30px;line-height:1.15;letter-spacing:-.8px;color:#1B1714">{{ ct.title }}</h1>
+          </section>
+
+          <sc-if value="{{ ct.isIntro }}" hint-placeholder-val="{{ false }}">
+            <section style="display:grid;justify-items:center;gap:18px;background:#fff;border:1.5px solid #1B1714;border-radius:22px;box-shadow:4px 4px 0 #1B1714;padding:26px 20px">
+              <img src="logo/logo-square.png" alt="" style="width:120px;height:120px;object-fit:contain"/>
+              <div style="width:100%">
+                <sc-for list="{{ ct.paragraphs }}" as="p" hint-placeholder-count="1">
+                  <p style="margin:0;color:#3A302A;font-size:16px;line-height:1.75;text-align:center;font-weight:600">{{ p }}</p>
+                </sc-for>
+              </div>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{ ct.isGreeting }}" hint-placeholder-val="{{ false }}">
+            <section style="display:grid;justify-items:center;gap:16px;background:#fff;border:1.5px solid #1B1714;border-radius:22px;box-shadow:4px 4px 0 #1B1714;padding:24px 20px">
+              <div style="display:grid;place-items:center;width:150px;height:150px;border-radius:26px;background:#FAEAC6;border:1.5px solid #1B1714;overflow:hidden">
+                <img src="players/player-spoon.png" alt="원장" style="max-width:108px;max-height:138px;object-fit:contain;margin-bottom:-8px"/>
+              </div>
+              <div style="font-family:'Black Han Sans',sans-serif;font-size:19px;color:#1B1714">{{ ct.director }}</div>
+              <div style="width:100%">
+                <sc-for list="{{ ct.paragraphs }}" as="p" hint-placeholder-count="1">
+                  <p style="margin:0;color:#3A302A;font-size:16px;line-height:1.75;text-align:center;font-weight:600">{{ p }}</p>
+                </sc-for>
+              </div>
+              <p style="margin:4px 0 0;align-self:end;color:#B5462F;font-family:'Black Han Sans',sans-serif;font-size:16px">원장 {{ ct.director }}</p>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{ ct.isEmpty }}" hint-placeholder-val="{{ false }}">
+            <section style="display:grid;place-items:center;gap:14px;padding:48px 22px;background:rgba(255,255,255,.55);border:1.5px dashed #CDB99E;border-radius:22px;text-align:center">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="width:10px;height:10px;border-radius:50%;background:#D83A2B;animation:beat 1.1s ease-in-out infinite"></span>
+                <span style="width:14px;height:14px;border-radius:50%;background:#E8A22B;animation:beat 1.1s ease-in-out .15s infinite"></span>
+                <span style="width:10px;height:10px;border-radius:50%;background:#2A6CA8;animation:beat 1.1s ease-in-out .3s infinite"></span>
+              </div>
+              <p style="margin:0;color:#7A6B5B;font-size:15px;font-weight:800">{{ ct.emptyMsg }}</p>
+            </section>
+          </sc-if>
+
+          <div style="display:grid;gap:10px;margin-top:18px">
+            <p style="margin:0;text-align:center;color:#8A7B6B;font-size:14px;font-weight:800">문의 · <a href="{{ callHref }}" style="color:#B5462F;font-weight:900;text-decoration:none">{{ email }}</a></p>
+            <button type="button" onClick="{{ onHome }}" style="display:flex;align-items:center;justify-content:center;height:50px;border:1.5px solid #1B1714;border-radius:16px;background:#fff;color:#1B1714;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit" style-active="background:#F0E6D4">홈으로</button>
+          </div>
+        </sc-if>
+
       </main>
 
-      <footer id="appFooter" class="app-footer"></footer>
+      <footer style="margin-top:14px;padding:20px 20px 28px;border-top:1.5px solid #E3D6C2;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px">
+          <span style="width:7px;height:7px;border-radius:2px;background:#D83A2B;transform:rotate(45deg)"></span>
+          <p style="margin:0;font-family:'Black Han Sans',sans-serif;font-size:16px;color:#1B1714;letter-spacing:-.3px">한국타악예술원</p>
+        </div>
+        <div style="display:grid;gap:5px">
+          <p style="margin:0;color:#5A4E42;font-size:13px;font-weight:700;line-height:1.5">{{ address }}</p>
+          <p style="margin:0;color:#8A7B6B;font-size:12px;font-weight:700;line-height:1.5"><span style="color:#B5462F">교통편</span> · {{ transit }}</p>
+          <p style="margin:0;color:#8A7B6B;font-size:12px;font-weight:700;line-height:1.5"><span style="color:#B5462F">문의</span> · <a href="{{ callHref }}" style="color:#B5462F;font-weight:800;text-decoration:none">{{ email }}</a></p>
+        </div>
+        <div style="display:flex;gap:9px;justify-content:center;margin:14px 0 4px">
+          <a href="{{ youtube }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:9px 15px;border:1.5px solid #1B1714;border-radius:999px;background:#fff;color:#1B1714;font-size:12.5px;font-weight:900;text-decoration:none;box-shadow:2px 2px 0 #1B1714" style-active="transform:translate(1px,1px);box-shadow:1px 1px 0 #1B1714">
+            <span style="width:9px;height:9px;border-radius:2px;background:#D83A2B"></span>YouTube
+          </a>
+          <a href="{{ band }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:9px 15px;border:1.5px solid #1B1714;border-radius:999px;background:#fff;color:#1B1714;font-size:12.5px;font-weight:900;text-decoration:none;box-shadow:2px 2px 0 #1B1714" style-active="transform:translate(1px,1px);box-shadow:1px 1px 0 #1B1714">
+            <span style="width:9px;height:9px;border-radius:2px;background:#2E9163"></span>네이버밴드
+          </a>
+        </div>
+        <p style="margin:12px 0 0;color:#B3A18C;font-size:10px;letter-spacing:1.5px;font-weight:700;text-transform:uppercase">Korean Traditional Percussion Music Institute</p>
+      </footer>
     </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { view: { type: 'home' }, stack: [], navKey: 1 };
 
-    <script src="js/data.js"></script>
-    <script src="js/views.js"></script>
-    <script src="js/router.js"></script>
-    <script src="js/app.js"></script>
-  </body>
+  constructor(props) {
+    super(props);
+    this.scrollRef = React.createRef();
+
+    this.SITE = {
+      name: '한국타악예술원',
+      nameEn: 'Korean Traditional Percussion Music Institute',
+      email: 'dugi0115@hanmail.net',
+      address: '경기도 부천시 송내대로 39 송내코아빌딩 지하1층',
+      transit: '1호선 송내역 1번출구 도보 200m',
+      youtube: 'https://youtube.com/@nantahappyschool',
+      band: 'https://band.us/band/91180321'
+    };
+    this.callHref = 'mailto:' + this.SITE.email;
+
+    this.CATEGORIES = [
+      { id: 'intro',       title: '예술원 소개', kind: 'content',  img: 'logo/logo-square.png',        accent: '#D83A2B', tint: '#F8DAD4' },
+      { id: 'class',       title: '수업 소개',   kind: 'submenu',  img: 'players/player-nanta.png',    accent: '#2A6CA8', tint: '#D4E1EE' },
+      { id: 'greeting',    title: '원장 인사말', kind: 'content',  img: 'players/player-janggu.png',   accent: '#E8A22B', tint: '#FAEAC6' },
+      { id: 'performance', title: '공연 소개',   kind: 'content',  img: 'players/player-cupta.png',    accent: '#2E9163', tint: '#D0E8DC' },
+      { id: 'history',     title: '예술원 연혁', kind: 'content',  img: 'icons/icon-janggu.png',       accent: '#8B5BA8', tint: '#E7D9EF' },
+      { id: 'license',     title: '자격증 소개', kind: 'submenu',  img: 'icons/icon-cupta.png',        accent: '#C2603A', tint: '#F2DCD0' }
+    ];
+
+    this.INSTR = {
+      nanta:  { title: '난타',     img: 'players/player-nanta.png',  accent: '#D83A2B', tint: '#F8DAD4' },
+      spoon:  { title: '스푼난타', img: 'players/player-spoon.png',  accent: '#E8A22B', tint: '#FAEAC6' },
+      cupta:  { title: '컵타',     img: 'players/player-cupta.png',  accent: '#2E9163', tint: '#D0E8DC' },
+      janggu: { title: '장구난타', img: 'players/player-janggu.png', accent: '#2A6CA8', tint: '#D4E1EE' }
+    };
+
+    this.CLASS_ORDER = ['nanta', 'spoon', 'cupta', 'janggu'];
+    this.LICENSE_ORDER = ['nanta', 'janggu', 'cupta', 'spoon'];
+
+    this.SCHEDULES = {
+      janggu: [ {day:'월',time:'13:00~14:30'},{day:'월',time:'18:30~20:00'},{day:'화',time:'08:30~10:00'},{day:'화',time:'14:30~16:00'},{day:'수',time:'17:00~18:30'},{day:'금',time:'11:20~12:50'} ],
+      nanta:  [ {day:'화',time:'10:00~11:30'},{day:'화',time:'13:00~14:30'},{day:'목',time:'18:30~20:00'},{day:'금',time:'10:00~11:20'} ],
+      spoon:  [ {day:'목',time:'10:00~11:00'},{day:'목',time:'20:00~21:00'} ],
+      cupta:  []
+    };
+
+    this.CLASS_DETAIL = {
+      nanta:  { tagline:'쉽고 재미있게 배우는 난타', 일시:'매주 화·목·금요일', 시간:'반별 시간표 참조', 장소:'한국타악예술원', 준비물:'편한 복장', 인원:'소수정예', 수강료:'문의' },
+      spoon:  { tagline:'리듬감 있게 배우는 스푼난타', 일시:'매주 목요일', 시간:'반별 시간표 참조', 장소:'한국타악예술원', 준비물:'편한 복장', 인원:'소수정예', 수강료:'문의' },
+      cupta:  { tagline:'생활 도구로 즐기는 컵타', 일시:'문의', 시간:'시간 문의', 장소:'한국타악예술원', 준비물:'문의', 인원:'소수정예', 수강료:'문의' },
+      janggu: { tagline:'전통 장단의 힘을 느끼는 장구난타', 일시:'매주 월·화·수·금요일', 시간:'반별 시간표 참조', 장소:'한국타악예술원', 준비물:'편한 복장', 인원:'소수정예', 수강료:'문의', note:"원본 시간표에는 '장구'로 표기되어 있어 확인이 필요합니다." }
+    };
+
+    this.LICENSE_DETAIL = {
+      nanta:  { title:'난타 지도자 자격증' },
+      janggu: { title:'장구난타 지도자 자격증' },
+      cupta:  { title:'컵타 지도자 자격증' },
+      spoon:  { title:'스푼난타 지도자 자격증' }
+    };
+
+    this.CONTENT = {
+      intro:       { title:'예술원 소개', kind:'intro',    paragraphs:['내용 준비 중입니다.'] },
+      greeting:    { title:'원장 인사말', kind:'greeting', director:'○○○', paragraphs:['내용 준비 중입니다.'] },
+      performance: { title:'공연 소개',   kind:'empty',    emptyMsg:'공연 정보 준비 중입니다.' },
+      history:     { title:'예술원 연혁', kind:'empty',    emptyMsg:'연혁 정보 준비 중입니다.' }
+    };
+  }
+
+  go(view) {
+    this.setState(s => ({ stack: [...s.stack, s.view], view, navKey: s.navKey + 1 }), () => this._top());
+  }
+  back() {
+    this.setState(s => {
+      const st = [...s.stack];
+      const v = st.pop() || { type: 'home' };
+      return { stack: st, view: v, navKey: s.navKey + 1 };
+    }, () => this._top());
+  }
+  home() {
+    this.setState(s => ({ view: { type: 'home' }, stack: [], navKey: s.navKey + 1 }), () => this._top());
+  }
+  _top() { if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; }
+
+  renderVals() {
+    const v = this.state.view;
+    const base = {
+      navKey: this.state.navKey,
+      scrollRef: this.scrollRef,
+      showBack: this.state.stack.length > 0,
+      onBack: () => this.back(),
+      onHome: () => this.home(),
+      callHref: this.callHref,
+      email: this.SITE.email,
+      address: this.SITE.address,
+      transit: this.SITE.transit,
+      youtube: this.SITE.youtube,
+      band: this.SITE.band,
+      isHome: false, isSubmenu: false, isClass: false, isLicense: false, isContent: false
+    };
+
+    if (v.type === 'home') {
+      base.isHome = true;
+      base.categories = this.CATEGORIES.map((c, i) => ({
+        ...c,
+        index: String(i + 1).padStart(2, '0'),
+        onOpen: () => {
+          if (c.kind === 'submenu') this.go({ type: 'submenu', cat: c.id });
+          else this.go({ type: 'content', cat: c.id });
+        }
+      }));
+    } else if (v.type === 'submenu') {
+      base.isSubmenu = true;
+      const isClass = v.cat === 'class';
+      const order = isClass ? this.CLASS_ORDER : this.LICENSE_ORDER;
+      base.sub = {
+        eyebrow: this.SITE.name,
+        title: isClass ? '수업 소개' : '자격증 소개',
+        lead: isClass ? '원하는 종목을 선택해 수업 정보와 시간표를 확인하세요.' : '취득 가능한 지도자 자격증 종목입니다.',
+        items: order.map(id => {
+          const it = this.INSTR[id];
+          return {
+            ...it,
+            onOpen: () => this.go({ type: isClass ? 'classDetail' : 'licenseDetail', item: id })
+          };
+        })
+      };
+    } else if (v.type === 'classDetail') {
+      base.isClass = true;
+      const it = this.INSTR[v.item];
+      const d = this.CLASS_DETAIL[v.item];
+      const sch = this.SCHEDULES[v.item] || [];
+      base.cls = {
+        title: it.title, tagline: d.tagline, img: it.img, accent: it.accent, tint: it.tint,
+        meta: [
+          { label: '일시', value: d['일시'] }, { label: '시간', value: d['시간'] },
+          { label: '장소', value: d['장소'] }, { label: '준비물', value: d['준비물'] },
+          { label: '인원', value: d['인원'] }, { label: '수강료', value: d['수강료'] },
+          { label: '문의', value: this.SITE.email }
+        ],
+        schedule: sch, hasSchedule: sch.length > 0, noSchedule: sch.length === 0,
+        note: d.note || ''
+      };
+    } else if (v.type === 'licenseDetail') {
+      base.isLicense = true;
+      const it = this.INSTR[v.item];
+      const d = this.LICENSE_DETAIL[v.item];
+      base.lic = { title: d.title, img: it.img, accent: '#C2603A', tint: '#F2DCD0', cost: '문의', contact: this.SITE.email };
+    } else if (v.type === 'content') {
+      base.isContent = true;
+      const c = this.CONTENT[v.cat];
+      base.ct = {
+        title: c.title,
+        isIntro: c.kind === 'intro',
+        isGreeting: c.kind === 'greeting',
+        isEmpty: c.kind === 'empty',
+        director: c.director || '',
+        paragraphs: c.paragraphs || [],
+        emptyMsg: c.emptyMsg || ''
+      };
+    }
+
+    return base;
+  }
+}
+</script>
+<script>
+  if ("serviceWorker" in navigator && ["http:", "https:"].includes(location.protocol)) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
+</script>
+</body>
 </html>

@@ -75,7 +75,7 @@
                   </span>
                 </span>
                 <span style="display:grid;place-items:center;width:94px;height:94px;margin:2px auto 0;border-radius:50%;background:var(--t)">
-                  <img src="{{ cat.img }}" alt="{{ cat.title }}" style="max-width:70px;max-height:70px;object-fit:contain"/>
+                  <img data-src="{{ cat.img }}" alt="{{ cat.title }}" style="max-width:70px;max-height:70px;object-fit:contain"/>
                 </span>
                 <span style="font-family:'Black Han Sans',sans-serif;font-size:17px;color:#1B1714;line-height:1.2;letter-spacing:-.3px">{{ cat.title }}</span>
               </button>
@@ -94,7 +94,7 @@
             <sc-for list="{{ sub.items }}" as="it">
               <button type="button" onClick="{{ it.onOpen }}" style="--c:{{ it.accent }};--t:{{ it.tint }};position:relative;display:flex;flex-direction:column;background:#fff;border:1.5px solid #1B1714;border-radius:20px;box-shadow:4px 4px 0 #1B1714;cursor:pointer;font:inherit;overflow:hidden" style-active="transform:translate(2px,2px);box-shadow:1px 1px 0 #1B1714">
                 <span style="display:grid;place-items:center;height:138px;background:var(--t);border-bottom:1.5px solid #1B1714">
-                  <img src="{{ it.img }}" alt="{{ it.title }}" style="max-width:118px;max-height:120px;object-fit:contain"/>
+                  <img data-src="{{ it.img }}" alt="{{ it.title }}" style="max-width:118px;max-height:120px;object-fit:contain"/>
                 </span>
                 <span style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px">
                   <span style="font-family:'Black Han Sans',sans-serif;font-size:18px;color:#1B1714;letter-spacing:-.3px">{{ it.title }}</span>
@@ -115,7 +115,7 @@
           <div style="display:grid;gap:16px">
             <div style="--t:{{ cls.tint }};--c:{{ cls.accent }};position:relative;display:grid;place-items:center;height:218px;background:var(--t);border:1.5px solid #1B1714;border-radius:22px;box-shadow:4px 4px 0 #1B1714;overflow:hidden">
               <span style="position:absolute;top:0;left:0;right:0;height:7px;background:var(--c)"></span>
-              <img src="{{ cls.img }}" alt="{{ cls.title }}" style="max-width:78%;max-height:178px;object-fit:contain"/>
+              <img data-src="{{ cls.img }}" alt="{{ cls.title }}" style="max-width:78%;max-height:178px;object-fit:contain"/>
             </div>
             <section style="background:#fff;border:1.5px solid #1B1714;border-radius:20px;box-shadow:4px 4px 0 #1B1714;padding:18px 16px">
               <h2 style="margin:0 0 14px;display:flex;align-items:center;gap:9px;font-family:'Black Han Sans',sans-serif;font-size:18px;color:#1B1714">
@@ -167,7 +167,7 @@
           <div style="display:grid;gap:16px">
             <div style="--t:{{ lic.tint }};--c:{{ lic.accent }};position:relative;display:grid;place-items:center;height:190px;background:var(--t);border:1.5px solid #1B1714;border-radius:22px;box-shadow:4px 4px 0 #1B1714;overflow:hidden">
               <span style="position:absolute;top:0;left:0;right:0;height:7px;background:var(--c)"></span>
-              <img src="{{ lic.img }}" alt="{{ lic.title }}" style="max-width:60%;max-height:140px;object-fit:contain"/>
+              <img data-src="{{ lic.img }}" alt="{{ lic.title }}" style="max-width:60%;max-height:140px;object-fit:contain"/>
             </div>
             <section style="background:#fff;border:1.5px solid #1B1714;border-radius:20px;box-shadow:4px 4px 0 #1B1714;padding:18px 16px;display:grid;gap:20px">
               <div>

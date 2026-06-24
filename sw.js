@@ -1,15 +1,26 @@
 "use strict";
 
-const CACHE_NAME = "korean-percussion-app-v2";
+const CACHE_NAME = "korean-percussion-app-v3";
 const CORE_ASSETS = [
   "./",
   "./index.html",
+  "./support.js",
   "./css/style.css",
   "./js/data.js",
   "./js/views.js",
   "./js/router.js",
   "./js/app.js",
   "./manifest.webmanifest",
+  "./logo/logo-horizontal.png",
+  "./logo/logo-square.png",
+  "./icons/icon-nanta.png",
+  "./icons/icon-spoon.png",
+  "./icons/icon-cupta.png",
+  "./icons/icon-janggu.png",
+  "./players/player-nanta.png",
+  "./players/player-spoon.png",
+  "./players/player-cupta.png",
+  "./players/player-janggu.png",
   "./assets/logo/logo-horizontal.png",
   "./assets/logo/logo-square.png",
   "./assets/icons/icon-nanta.png",
@@ -43,9 +54,20 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put("./index.html", copy));
+          return response;
+        })
+        .catch(() => caches.match("./index.html"))
+    );
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then((cached) => (
-      cached || fetch(event.request).catch(() => caches.match("./index.html"))
-    ))
+    caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
 });
