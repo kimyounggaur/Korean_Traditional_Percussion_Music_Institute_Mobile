@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#C8442B">
+    <title>한국타악예술원</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" type="image/png" href="assets/logo/logo-square.png">
+    <link rel="apple-touch-icon" href="assets/logo/logo-square.png">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header" aria-label="앱 상단">
+        <button id="backButton" class="back-button" type="button" aria-label="뒤로가기" hidden>
+          <span aria-hidden="true">←</span>
+          <span>뒤로</span>
+        </button>
+        <button id="homeButton" class="brand-button" type="button" aria-label="홈으로 이동">
+          <img id="headerLogo" src="assets/logo/logo-horizontal.png" alt="한국타악예술원 로고">
+          <span id="headerTitle" class="header-title" hidden></span>
+        </button>
+        <span class="header-space" aria-hidden="true"></span>
+      </header>
+
+      <main id="view" tabindex="-1" aria-live="polite">
+        <section class="loading-state">
+          <img src="assets/logo/logo-square.png" alt="" aria-hidden="true">
+          <p>한국타악예술원 준비 중</p>
+        </section>
+      </main>
+
+      <footer id="appFooter" class="app-footer"></footer>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/views.js"></script>
+    <script src="js/router.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

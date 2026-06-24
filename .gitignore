@@ -1,0 +1,7 @@
+01 Source/
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
+output/
+.playwright-cli/
