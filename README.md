@@ -1,6 +1,8 @@
 # 한국타악예술원 모바일 웹앱
 
-순수 HTML/CSS/JavaScript로 만든 한국타악예술원 소개용 모바일 웹앱입니다. 빌드 도구 없이 `index.html` 하나를 기준으로 동작하며, GitHub Pages 배포를 고려해 모든 경로를 상대경로로 구성했습니다.
+순수 HTML/CSS/JavaScript로 만든 한국타악예술원 소개용 모바일 웹앱입니다. 빌드 도구 없이 `index.html` 하나를 기준으로 동작하며, Vercel 배포를 고려해 모든 경로를 상대경로로 구성했습니다.
+
+운영 URL: https://korean-traditional-percussion-music.vercel.app
 
 ## 실행
 
@@ -34,6 +36,4 @@ git remote add origin https://github.com/<아이디>/korean-percussion-app.git
 git push -u origin main
 ```
 
-GitHub 저장소에서 `Settings` → `Pages` → `Build and deployment` → `Deploy from a branch`를 선택한 뒤 `main` / `/root`로 저장합니다.
-
-배포 주소는 보통 `https://<아이디>.github.io/korean-percussion-app/` 형태입니다.
+Vercel 프로젝트가 GitHub 저장소의 `main` 브랜치와 연결되어 있습니다. `main`에 커밋을 푸시하면 Vercel이 자동으로 프로덕션 배포를 실행합니다.
