@@ -2,28 +2,46 @@
 
 function renderFooter() {
   const footer = document.getElementById("appFooter");
-  const parts = [
-    escapeHtml(SITE.name),
-    `<a href="${phoneHref()}">${escapeHtml(SITE.phone)}</a>`,
-    escapeHtml(SITE.address || UI_TEXT.ready)
-  ];
+  if (!footer) {
+    return;
+  }
 
   footer.innerHTML = `
-    <p>${parts.join(`<span>${escapeHtml(UI_TEXT.footerSeparator)}</span>`)}</p>
-    <small>${escapeHtml(UI_TEXT.appInstallNote)}</small>
+    <div class="appfooter-brand">
+      <span class="d"></span>
+      <p>${escapeHtml(SITE.name)}</p>
+    </div>
+    <div class="appfooter-info">
+      <p class="appfooter-addr">${escapeHtml(SITE.address)}</p>
+      <p class="appfooter-meta"><b>교통편</b> · ${escapeHtml(SITE.transit)}</p>
+      <p class="appfooter-meta"><b>문의</b> · <a href="${escapeHtml(mailHref())}">${escapeHtml(SITE.email)}</a></p>
+    </div>
+    <div class="social">
+      <a href="${escapeHtml(SITE.youtube)}" target="_blank" rel="noopener">
+        <span class="dot" style="background: var(--red)"></span>YouTube
+      </a>
+      <a href="${escapeHtml(SITE.band)}" target="_blank" rel="noopener">
+        <span class="dot" style="background: var(--green)"></span>네이버밴드
+      </a>
+    </div>
+    <p class="appfooter-en">${escapeHtml(SITE.nameEn)}</p>
   `;
 }
 
 function bindGlobalEvents() {
-  document.getElementById("backButton").addEventListener("click", () => {
-    if (window.history.length > 1) {
-      window.history.back();
+  const backButton = document.getElementById("backButton");
+  const homeButton = document.getElementById("homeButton");
+
+  backButton?.addEventListener("click", () => {
+    const route = parseHash();
+    if (route.itemId) {
+      navigate(`#/c/${route.catId}`);
       return;
     }
     navigate("#/");
   });
 
-  document.getElementById("homeButton").addEventListener("click", () => {
+  homeButton?.addEventListener("click", () => {
     navigate("#/");
   });
 

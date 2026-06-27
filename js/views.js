@@ -9,9 +9,8 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-function phoneHref(phone = SITE.phone) {
-  const normalized = String(phone || SITE.phone).replace(/[^\d+]/g, "");
-  return `tel:${normalized}`;
+function mailHref(email = SITE.email) {
+  return `mailto:${String(email || "").trim()}`;
 }
 
 function findCategory(catId) {
@@ -22,6 +21,59 @@ function findSubItem(catId, itemId) {
   return (SUBMENUS[catId] || []).find((item) => item.id === itemId);
 }
 
+function setView(markup) {
+  const view = document.getElementById("view");
+  view.innerHTML = `<div class="view-enter">${markup}</div>`;
+}
+
+function brandTitle() {
+  const name = SITE.name || "";
+  const highlight = "예술원";
+  const index = name.indexOf(highlight);
+
+  if (index === -1) {
+    return escapeHtml(name);
+  }
+
+  return [
+    escapeHtml(name.slice(0, index)),
+    `<span>${escapeHtml(highlight)}</span>`,
+    escapeHtml(name.slice(index + highlight.length))
+  ].join("");
+}
+
+function beatRow() {
+  const beats = [
+    { size: 9, color: "var(--red)", delay: "0s" },
+    { size: 13, color: "var(--gold)", delay: ".12s" },
+    { size: 9, color: "var(--green)", delay: ".24s" },
+    { size: 16, color: "var(--blue)", delay: ".36s" },
+    { size: 9, color: "var(--purple)", delay: ".48s" }
+  ];
+
+  return `
+    <div class="beat-row" aria-hidden="true">
+      ${beats.map((beat) => `
+        <span class="beat" style="width: ${beat.size}px; height: ${beat.size}px; background: ${beat.color}; animation-delay: ${beat.delay}"></span>
+      `).join("")}
+    </div>
+  `;
+}
+
+function itemVars(item) {
+  return `--c: ${escapeHtml(item?.accent || "#D83A2B")}; --t: ${escapeHtml(item?.tint || "#F8DAD4")}`;
+}
+
+function pageLead(title, description = "", extraClass = "") {
+  return `
+    <section class="lead ${escapeHtml(extraClass)}">
+      <p class="lead-eyebrow">${escapeHtml(SITE.name)}</p>
+      <h1 class="lead-title">${escapeHtml(title || UI_TEXT.ready)}</h1>
+      ${description ? `<p class="lead-copy">${escapeHtml(description)}</p>` : ""}
+    </section>
+  `;
+}
+
 function listParagraphs(paragraphs) {
   const safeParagraphs = Array.isArray(paragraphs) && paragraphs.length ? paragraphs : [UI_TEXT.ready];
   return safeParagraphs
@@ -29,47 +81,38 @@ function listParagraphs(paragraphs) {
     .join("");
 }
 
-function emptyState(message = UI_TEXT.ready) {
+function placeholder(message = UI_TEXT.unavailable) {
   return `
-    <div class="empty-state" role="status">
-      <img src="${escapeHtml(SITE.logoSquare)}" alt="" aria-hidden="true" loading="lazy">
+    <div class="placeholder" role="status">
+      <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
       <p>${escapeHtml(message)}</p>
     </div>
   `;
 }
 
-function setView(markup) {
-  const view = document.getElementById("view");
-  view.innerHTML = `<div class="view-enter">${markup}</div>`;
-}
-
-function pageLead(title, description = "") {
-  return `
-    <section class="page-lead">
-      <p class="eyebrow">${escapeHtml(SITE.name)}</p>
-      <h1>${escapeHtml(title)}</h1>
-      ${description ? `<p class="lead-copy">${escapeHtml(description)}</p>` : ""}
-    </section>
-  `;
-}
-
 function renderHome() {
   const cards = CATEGORIES.map((category, index) => `
-    <button class="cat-card accent-${(index % 4) + 1}" type="button" data-navigate="#/c/${escapeHtml(category.id)}">
-      <span class="card-image-wrap">
-        <img src="${escapeHtml(category.icon)}" alt="${escapeHtml(category.title)} 아이콘" loading="lazy">
+    <button class="cat-card nb nb-press" style="${itemVars(category)}" type="button" data-navigate="#/c/${escapeHtml(category.id)}">
+      <span class="cat-bar"></span>
+      <span class="cat-top">
+        <span class="cat-index">${String(index + 1).padStart(2, "0")}</span>
+        <span class="cat-dots" aria-hidden="true"><i></i><i></i><i></i></span>
       </span>
-      <span class="card-title">${escapeHtml(category.title)}</span>
+      <span class="cat-orb">
+        <img src="${escapeHtml(category.img)}" alt="${escapeHtml(category.title)}" loading="lazy">
+      </span>
+      <span class="cat-name">${escapeHtml(category.title)}</span>
     </button>
   `).join("");
 
   setView(`
-    <section class="home-hero" aria-labelledby="home-title">
-      <img class="home-mark" src="${escapeHtml(SITE.logoSquare)}" alt="" aria-hidden="true" loading="lazy">
-      <h1 id="home-title" class="home-title">${escapeHtml(SITE.name)}</h1>
-      <p class="home-subtitle">${escapeHtml(SITE.nameEn)}</p>
+    <section class="hero" aria-labelledby="home-title">
+      <img class="hero-logo" src="${escapeHtml(SITE.logoSquare)}" alt="" aria-hidden="true" loading="lazy">
+      <h1 id="home-title" class="hero-title">${brandTitle()}</h1>
+      <p class="hero-sub">${escapeHtml(SITE.nameEn)}</p>
+      ${beatRow()}
     </section>
-    <nav class="grid-2 home-grid" aria-label="주요 메뉴">
+    <nav class="menu-grid" aria-label="주요 메뉴">
       ${cards}
     </nav>
   `);
@@ -77,20 +120,27 @@ function renderHome() {
 
 function renderSubmenu(catId) {
   const category = findCategory(catId);
-  const items = SUBMENUS[catId] || [];
-  const cards = items.map((item, index) => `
-    <button class="sub-card accent-${(index % 4) + 1}" type="button" data-navigate="#/c/${escapeHtml(catId)}/${escapeHtml(item.id)}">
-      <span class="sub-image-wrap">
-        <img src="${escapeHtml(item.image || item.icon)}" alt="${escapeHtml(item.title)} 일러스트" loading="lazy">
+  const isClass = catId === "class";
+  const description = isClass
+    ? "원하는 종목을 선택해 수업 정보와 시간표를 확인하세요."
+    : "취득 가능한 지도자 자격증 종목입니다.";
+
+  const cards = (SUBMENUS[catId] || []).map((item) => `
+    <button class="sub-card nb nb-press" style="${itemVars(item)}" type="button" data-navigate="#/c/${escapeHtml(catId)}/${escapeHtml(item.id)}">
+      <span class="sub-thumb">
+        <img src="${escapeHtml(item.img)}" alt="${escapeHtml(item.title)}" loading="lazy">
       </span>
-      <span class="sub-title">${escapeHtml(item.title)}</span>
+      <span class="sub-foot">
+        <span class="sub-name">${escapeHtml(item.title)}</span>
+        <span class="sub-arrow" aria-hidden="true">&rarr;</span>
+      </span>
     </button>
   `).join("");
 
   setView(`
-    ${pageLead(category?.title || UI_TEXT.ready)}
-    <nav class="grid-2 submenu-grid" aria-label="${escapeHtml(category?.title || UI_TEXT.ready)} 종목">
-      ${cards || emptyState()}
+    ${pageLead(category?.title, description)}
+    <nav class="sub-grid" aria-label="${escapeHtml(category?.title || UI_TEXT.ready)} 종목">
+      ${cards || placeholder()}
     </nav>
   `);
 }
@@ -106,25 +156,21 @@ function renderContent(catId) {
     return;
   }
 
-  if (catId === "performance") {
-    renderPerformance();
+  if (catId === "performance" || catId === "history") {
+    renderEmptyContent(catId);
     return;
   }
 
-  if (catId === "history") {
-    renderHistory();
-    return;
-  }
-
-  setView(`${pageLead(UI_TEXT.unavailable)}${emptyState()}`);
+  setView(`${pageLead(UI_TEXT.unavailable)}${placeholder()}${renderContentActions()}`);
 }
 
 function renderIntro() {
   const content = CONTENT.intro || {};
+
   setView(`
-    ${pageLead(content.title || "예술원 소개")}
-    <section class="content-panel intro-panel">
-      <img class="content-symbol" src="${escapeHtml(content.image || SITE.logoSquare)}" alt="${escapeHtml(SITE.name)} 상징" loading="lazy">
+    ${pageLead(content.title)}
+    <section class="content-card nb">
+      <img class="content-logo" src="${escapeHtml(SITE.logoSquare)}" alt="${escapeHtml(SITE.name)}" loading="lazy">
       <div class="prose">${listParagraphs(content.paragraphs)}</div>
     </section>
     ${renderContentActions()}
@@ -133,55 +179,30 @@ function renderIntro() {
 
 function renderGreeting() {
   const content = CONTENT.greeting || {};
+  const director = content.director || "○○○";
+
   setView(`
-    ${pageLead(content.title || "원장 인사말")}
-    <section class="content-panel greeting-panel">
-      <img class="portrait" src="${escapeHtml(content.photo || SITE.logoSquare)}" alt="원장 사진" loading="lazy">
-      <div class="director-name">${escapeHtml(content.director || "○○○")}</div>
+    ${pageLead(content.title)}
+    <section class="content-card nb">
+      <div class="portrait-box">
+        <img src="players/player-spoon.png" alt="원장" loading="lazy">
+      </div>
+      <div class="director">${escapeHtml(director)}</div>
       <div class="prose">${listParagraphs(content.paragraphs)}</div>
-      <p class="signature">원장 ${escapeHtml(content.director || "○○○")}</p>
+      <p class="signature">원장 ${escapeHtml(director)}</p>
     </section>
     ${renderContentActions()}
   `);
 }
 
-function renderPerformance() {
-  const content = CONTENT.performance || {};
-  const items = Array.isArray(content.items) ? content.items : [];
-  const cards = items.map((item) => `
-    <article class="list-card">
-      <h2>${escapeHtml(item.title || UI_TEXT.ready)}</h2>
-      <dl class="meta-list compact">
-        <div><dt>일자</dt><dd>${escapeHtml(item.date || UI_TEXT.ready)}</dd></div>
-        <div><dt>장소</dt><dd>${escapeHtml(item.place || UI_TEXT.ready)}</dd></div>
-      </dl>
-      <p>${escapeHtml(item.description || UI_TEXT.ready)}</p>
-    </article>
-  `).join("");
+function renderEmptyContent(catId) {
+  const content = CONTENT[catId] || {};
 
   setView(`
-    ${pageLead(content.title || "공연 소개")}
-    <section class="list-stack">
-      ${cards || emptyState(UI_TEXT.performanceReady)}
-    </section>
-    ${renderContentActions()}
-  `);
-}
-
-function renderHistory() {
-  const content = CONTENT.history || {};
-  const items = Array.isArray(content.items) ? content.items : [];
-  const timeline = items.map((item) => `
-    <article class="timeline-item">
-      <time>${escapeHtml(item.year || "")}</time>
-      <p>${escapeHtml(item.description || item.content || UI_TEXT.ready)}</p>
-    </article>
-  `).join("");
-
-  setView(`
-    ${pageLead(content.title || "예술원 연혁")}
-    <section class="timeline" aria-label="연혁">
-      ${timeline || emptyState(UI_TEXT.historyReady)}
+    ${pageLead(content.title)}
+    <section class="empty-card">
+      ${beatRow()}
+      <p>${escapeHtml(content.emptyMsg || UI_TEXT.ready)}</p>
     </section>
     ${renderContentActions()}
   `);
@@ -189,10 +210,10 @@ function renderHistory() {
 
 function renderContentActions() {
   return `
-    <section class="page-actions">
-      <p>${escapeHtml(UI_TEXT.contact)}: <a href="${phoneHref()}">${escapeHtml(SITE.phone)}</a></p>
-      <button class="secondary-button" type="button" data-navigate="#/">${escapeHtml(UI_TEXT.goHome)}</button>
-    </section>
+    <div class="content-actions">
+      <p class="contact">문의 · <a href="${escapeHtml(mailHref())}">${escapeHtml(SITE.email)}</a></p>
+      <button class="btn-ghost" type="button" data-navigate="#/">홈으로</button>
+    </div>
   `;
 }
 
@@ -207,131 +228,126 @@ function renderDetail(catId, itemId) {
     return;
   }
 
-  setView(`${pageLead(UI_TEXT.unavailable)}${emptyState()}${renderListButton(catId)}`);
+  setView(`${pageLead(UI_TEXT.unavailable)}${placeholder()}${renderListButton(catId)}`);
 }
 
 function renderClassDetail(itemId) {
   const item = findSubItem("class", itemId);
   const detail = CLASS_DETAIL[itemId];
 
-  if (!detail) {
-    setView(`${pageLead(item?.title || UI_TEXT.unavailable)}${emptyState()}${renderListButton("class")}`);
+  if (!item || !detail) {
+    setView(`${pageLead(item?.title || UI_TEXT.unavailable)}${placeholder()}${renderListButton("class")}`);
     return;
   }
 
-  const labels = [
-    ["일시", detail["일시"]],
-    ["시간", detail["시간"]],
-    ["장소", detail["장소"]],
-    ["준비물", detail["준비물"]],
-    ["인원", detail["인원"]],
-    ["수강료", detail["수강료"]],
-    ["문의", detail["문의"]]
-  ];
+  const metaRows = Object.entries(detail.meta || {}).concat([["문의", SITE.email]]);
 
   setView(`
-    ${pageLead(detail.title || item?.title || "수업 상세", detail["한줄소개"])}
-    <section class="poster-card">
-      <img class="poster-figure" src="${escapeHtml(detail["이미지"] || item?.image || SITE.logoSquare)}" alt="${escapeHtml(detail.title || item?.title || "수업")} 일러스트" loading="lazy">
-      <div class="info-block">
-        <h2>${escapeHtml(UI_TEXT.classInfo)}</h2>
-        <dl class="meta-list">
-          ${labels.map(([label, value]) => `
-            <div>
-              <dt>${escapeHtml(label)}</dt>
-              <dd>${escapeHtml(value || UI_TEXT.ready)}</dd>
-            </div>
-          `).join("")}
+    ${pageLead(item.title, detail.tagline, "detail-lead")}
+    <div class="stack">
+      ${renderFigure(item)}
+      <section class="panel nb">
+        <h2 class="panel-h"><span class="bar" style="background: ${escapeHtml(item.accent)}"></span>수업 정보</h2>
+        <dl class="meta">
+          ${metaRows.map(([label, value]) => renderMetaRow(label, value)).join("")}
         </dl>
-      </div>
-      <div class="schedule-block">
-        <h2>${escapeHtml(UI_TEXT.schedule)}</h2>
-        ${renderSchedule(detail.schedule)}
+      </section>
+      <section class="panel nb">
+        <h2 class="panel-h"><span class="bar" style="background: var(--gold)"></span>반별 시간표</h2>
+        ${renderSchedule(SCHEDULES[itemId])}
         ${detail.note ? `<p class="note">${escapeHtml(detail.note)}</p>` : ""}
-      </div>
-    </section>
-    <section class="detail-actions">
-      <a class="primary-button" href="${phoneHref(detail["문의"])}">${escapeHtml(UI_TEXT.phoneCall)}</a>
-      <button class="secondary-button" type="button" data-navigate="#/c/class">← ${escapeHtml(UI_TEXT.classList)}</button>
-    </section>
-  `);
-}
-
-function renderSchedule(schedule) {
-  if (!Array.isArray(schedule) || !schedule.length) {
-    return `<p class="time-inquiry">${escapeHtml(UI_TEXT.timeInquiry)}</p>`;
-  }
-
-  return `
-    <div class="schedule-grid">
-      ${schedule.map((item) => `
-        <span class="schedule-chip">
-          <strong>${escapeHtml(item.day)}</strong>
-          <span>${escapeHtml(item.time)}</span>
-        </span>
-      `).join("")}
+      </section>
+      <section class="actions">
+        <a class="btn-primary nb nb-press" href="${escapeHtml(mailHref())}">이메일 문의하기</a>
+        <button class="btn-ghost" type="button" data-navigate="#/c/class">&larr; 수업 목록</button>
+      </section>
     </div>
-  `;
+  `);
 }
 
 function renderLicenseDetail(itemId) {
   const item = findSubItem("license", itemId);
   const detail = LICENSE_DETAIL[itemId];
 
-  if (!detail) {
-    setView(`${pageLead(item?.title || UI_TEXT.unavailable)}${emptyState()}${renderListButton("license")}`);
+  if (!item || !detail) {
+    setView(`${pageLead(item?.title || UI_TEXT.unavailable)}${placeholder()}${renderListButton("license")}`);
     return;
   }
 
-  const courses = Array.isArray(detail["과정"]) ? detail["과정"] : [];
-  const steps = Array.isArray(detail["취득절차"]) ? detail["취득절차"] : [];
-
   setView(`
-    ${pageLead(detail["자격명"] || `${detail.title || item?.title || ""} 지도자 자격증`)}
-    <section class="license-card">
-      <img class="license-icon" src="${escapeHtml(detail["이미지"] || item?.icon || SITE.logoSquare)}" alt="${escapeHtml(detail.title || item?.title || "자격증")} 아이콘" loading="lazy">
-
-      <div class="info-block">
-        <h2>${escapeHtml(UI_TEXT.course)}</h2>
-        ${courses.length ? `
-          <div class="step-grid">
-            ${courses.map((course) => `<span>${escapeHtml(course)}</span>`).join("")}
-          </div>
-        ` : emptyState()}
-      </div>
-
-      <div class="info-block">
-        <h2>${escapeHtml(UI_TEXT.requirement)}</h2>
-        <p class="text-line">${escapeHtml(detail["응시자격"] || UI_TEXT.ready)}</p>
-      </div>
-
-      <div class="info-block">
-        <h2>${escapeHtml(UI_TEXT.licenseProcess)}</h2>
-        ${steps.length ? `
-          <ol class="process-list">
-            ${steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
-          </ol>
-        ` : emptyState()}
-      </div>
-
-      <dl class="meta-list">
-        <div><dt>${escapeHtml(UI_TEXT.cost)}</dt><dd>${escapeHtml(detail["비용"] || UI_TEXT.ready)}</dd></div>
-        <div><dt>${escapeHtml(UI_TEXT.contact)}</dt><dd>${escapeHtml(detail["문의"] || SITE.phone)}</dd></div>
-      </dl>
-    </section>
-    <section class="detail-actions">
-      <a class="primary-button" href="${phoneHref(detail["문의"])}">${escapeHtml(UI_TEXT.phoneCall)}</a>
-      <button class="secondary-button" type="button" data-navigate="#/c/license">← ${escapeHtml(UI_TEXT.licenseList)}</button>
-    </section>
+    ${pageLead(detail.title)}
+    <div class="stack">
+      ${renderFigure({ ...item, accent: "#C2603A", tint: "#F2DCD0" }, "190px")}
+      <section class="panel panel-sections nb">
+        <div>
+          <h2 class="panel-sub-h"><span class="bar" style="background: var(--brown)"></span>과정</h2>
+          ${placeholder()}
+        </div>
+        <div>
+          <h2 class="panel-sub-h"><span class="bar" style="background: var(--brown)"></span>응시자격</h2>
+          <p class="text-line">내용 준비 중입니다.</p>
+        </div>
+        <div>
+          <h2 class="panel-sub-h"><span class="bar" style="background: var(--brown)"></span>취득 절차</h2>
+          ${placeholder()}
+        </div>
+        <dl class="meta">
+          ${renderMetaRow("비용", detail.cost || "문의")}
+          ${renderMetaRow("문의", detail.contact || SITE.email)}
+        </dl>
+      </section>
+      <section class="actions">
+        <a class="btn-primary nb nb-press" href="${escapeHtml(mailHref())}">이메일 문의하기</a>
+        <button class="btn-ghost" type="button" data-navigate="#/c/license">&larr; 자격증 목록</button>
+      </section>
+    </div>
   `);
 }
 
-function renderListButton(catId) {
-  const label = catId === "license" ? UI_TEXT.licenseList : UI_TEXT.classList;
-  const target = catId === "license" ? "#/c/license" : "#/c/class";
+function renderFigure(item, height = "") {
+  const heightStyle = height ? `; height: ${escapeHtml(height)}` : "";
+
   return `
-    <section class="detail-actions">
-      <button class="secondary-button" type="button" data-navigate="${target}">← ${escapeHtml(label)}</button>
+    <div class="figure nb" style="${itemVars(item)}${heightStyle}">
+      <span class="figure-bar"></span>
+      <img src="${escapeHtml(item.img)}" alt="${escapeHtml(item.title)}" loading="lazy">
+    </div>
+  `;
+}
+
+function renderMetaRow(label, value) {
+  return `
+    <div class="meta-row">
+      <dt>${escapeHtml(label)}</dt>
+      <dd>${escapeHtml(value || UI_TEXT.ready)}</dd>
+    </div>
+  `;
+}
+
+function renderSchedule(schedule) {
+  if (!Array.isArray(schedule) || !schedule.length) {
+    return `<p class="time-inquiry">시간 문의</p>`;
+  }
+
+  return `
+    <div class="sched-grid">
+      ${schedule.map((item) => `
+        <span class="sched-chip">
+          <strong class="sched-day">${escapeHtml(item.day)}</strong>
+          <span class="sched-time">${escapeHtml(item.time)}</span>
+        </span>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderListButton(catId) {
+  const label = catId === "license" ? "자격증 목록" : "수업 목록";
+  const target = catId === "license" ? "#/c/license" : "#/c/class";
+
+  return `
+    <section class="actions">
+      <button class="btn-ghost" type="button" data-navigate="${target}">&larr; ${escapeHtml(label)}</button>
     </section>
   `;
 }

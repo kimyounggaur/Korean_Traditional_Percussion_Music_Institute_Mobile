@@ -29,34 +29,17 @@ function navigate(path = "#/") {
   window.location.hash = nextHash;
 }
 
-function resolveHeaderTitle(route) {
-  if (route.route === "home") {
-    return "";
-  }
-
-  const category = findCategory(route.catId);
-  if (!category) {
-    return UI_TEXT.home;
-  }
-
-  if (!route.itemId) {
-    return category.title;
-  }
-
-  const item = findSubItem(route.catId, route.itemId);
-  return item ? item.title : category.title;
-}
-
 function updateHeader(route) {
   const isHome = route.route === "home";
   const backButton = document.getElementById("backButton");
-  const headerLogo = document.getElementById("headerLogo");
-  const headerTitle = document.getElementById("headerTitle");
+  const homeButton = document.getElementById("homeButton");
 
-  backButton.hidden = isHome;
-  headerLogo.hidden = !isHome;
-  headerTitle.hidden = isHome;
-  headerTitle.textContent = resolveHeaderTitle(route);
+  if (backButton) {
+    backButton.hidden = isHome;
+  }
+  if (homeButton) {
+    homeButton.hidden = isHome;
+  }
 }
 
 function render() {
